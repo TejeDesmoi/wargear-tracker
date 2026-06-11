@@ -21,7 +21,7 @@ public static class ArmyEnpoints
             return Results.Created($"/armies/{army.Id}", army);
         });
 
-        app.MapGet("/armies/{id}", async (WargearDbContext db, int id) =>
+        app.MapGet("/armies/{id}", async (WargearDbContext db, Guid id) =>
         {
             var army = await db.Armies.FindAsync(id);
             return army != null ? Results.Ok(army) : Results.NotFound();
