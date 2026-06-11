@@ -20,5 +20,11 @@ public static class ArmyEnpoints
             await db.SaveChangesAsync();
             return Results.Created($"/armies/{army.Id}", army);
         });
+
+        app.MapGet("/armies/{id}", async (WargearDbContext db, int id) =>
+        {
+            var army = await db.Armies.FindAsync(id);
+            return army != null ? Results.Ok(army) : Results.NotFound();
+        });
     }
 }
