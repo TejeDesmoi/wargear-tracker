@@ -27,7 +27,7 @@ public static class ArmyEnpoints
             return army != null ? Results.Ok(army) : Results.NotFound();
         });
 
-        app.MapDelete("/armies/{id}", async (WargearDbContext db, int id) =>
+        app.MapDelete("/armies/{id}", async (WargearDbContext db, Guid id) =>
         {
             var army = await db.Armies.FindAsync(id);
             if (army == null)
