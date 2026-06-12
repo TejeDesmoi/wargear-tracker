@@ -6,7 +6,7 @@ Wargear Tracker lets you manage your wargaming miniature collection and follow y
 
 ![Status](https://img.shields.io/badge/status-phase%201%20complete-green)
 ![License](https://img.shields.io/badge/license-MIT-teal)
-![Stack](https://img.shields.io/badge/stack-.NET%209%20%7C%20EF%20Core%20%7C%20SQLite-blue)
+![Stack](https://img.shields.io/badge/stack-.NET%2010%20%7C%20EF%20Core%20%7C%20SQLite-blue)
 
 ---
 
@@ -24,7 +24,7 @@ Wargear Tracker lets you manage your wargaming miniature collection and follow y
 
 ### Requirements
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) *(phase 2 only)*
 
 ### Run locally
@@ -92,8 +92,8 @@ wargear-tracker/
 - [x] Swagger UI
 
 ### Phase 2 — Deploy and community
-- [ ] JWT authentication (register + login)
-- [ ] Migrate to PostgreSQL + Docker
+- [x] JWT authentication (register + login)
+- [x] Migrate to PostgreSQL + Docker
 - [ ] Public shareable link per army
 - [ ] Blazor WebAssembly frontend
 - [ ] CI/CD with GitHub Actions
