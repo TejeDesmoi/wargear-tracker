@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WargearTracker.Data;
 
@@ -10,9 +11,11 @@ using WargearTracker.Data;
 namespace WargearTracker.Data.Migrations
 {
     [DbContext(typeof(WargearDbContext))]
-    partial class WargearDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260612070454_AddUserEntity")]
+    partial class AddUserEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
