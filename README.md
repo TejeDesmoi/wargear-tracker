@@ -1,18 +1,24 @@
 # Wargear Tracker
 
-Track your miniature collection painting progress — built with ASP.NET Core, Entity Framework and Blazor.
+> Stop using Excel to track your pile of shame.
 
-![Status](https://img.shields.io/badge/status-work%20in%20progress-amber)
+Wargear Tracker lets you manage your wargaming miniature collection and follow your painting progress army by army — from sprue to finished model.
+
+![Status](https://img.shields.io/badge/status-phase%201%20complete-green)
 ![License](https://img.shields.io/badge/license-MIT-teal)
+![Stack](https://img.shields.io/badge/stack-.NET%209%20%7C%20EF%20Core%20%7C%20SQLite-blue)
+
+---
 
 ## What it does
 
-Wargear Tracker lets you manage your wargaming miniature collection: add armies, track each unit's painting status, and share your progress with a public link.
+- **Track your armies** — organize by game system and faction (40k, AoS, Bolt Action...)
+- **Follow painting progress** per unit: Unboxed → Built → Primed → Base Coat → Detailed → Finished
+- **Manage your collection** — add, update and delete units with full CRUD support
+- Public shareable link per army *(coming in phase 2)*
+- Visual progress bar per army *(coming in phase 2)*
 
-- Add armies by game and faction
-- Track painting status per unit (unboxed → built → primed → base coat → detailed → finished)
-- Visual progress bar per army
-- Public shareable link for your collection
+---
 
 ## Screenshots
 
@@ -23,51 +29,105 @@ Wargear Tracker lets you manage your wargaming miniature collection: add armies,
 ### Requirements
 
 - [.NET 9 SDK](https://dotnet.microsoft.com/download)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) _(phase 2)_
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) *(phase 2 only)*
 
 ### Run locally
 
 ```bash
 git clone https://github.com/TejeDesmoi/wargear-tracker.git
 cd wargear-tracker
+
+# Apply database migrations
+dotnet ef database update \
+  --project src/WargearTracker.Data \
+  --startup-project src/WargearTracker.Api
+
+# Start the API
 dotnet run --project src/WargearTracker.Api
 ```
 
-API available at `https://localhost:5001`. Swagger UI at `/swagger`.
+API available at `https://localhost:7xxx` — exact port shown in terminal output.  
+Swagger UI at `/swagger` — use it to test all endpoints without a frontend.
+
+---
+
+## API endpoints (phase 1)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/armies` | List all armies |
+| POST | `/armies` | Create a new army |
+| GET | `/armies/{id}` | Get a single army |
+| DELETE | `/armies/{id}` | Delete an army |
+| GET | `/armies/{id}/miniatures` | List miniatures in an army |
+| POST | `/miniatures` | Add a miniature |
+| PATCH | `/miniatures/{id}/status` | Update paint status |
+| DELETE | `/miniatures/{id}` | Delete a miniature |
+
+---
 
 ## Project structure
 
 ```
-src/
-  WargearTracker.Core/    # Entities, enums, interfaces
-  WargearTracker.Data/    # EF Core DbContext, migrations
-  WargearTracker.Api/     # ASP.NET Core Minimal API
-  WargearTracker.Web/     # Blazor WASM frontend (phase 2)
-tests/
-  WargearTracker.Tests/
+wargear-tracker/
+├── src/
+│   ├── WargearTracker.Core/     # Entities, enums — no external dependencies
+│   ├── WargearTracker.Data/     # EF Core DbContext, migrations
+│   ├── WargearTracker.Api/      # ASP.NET Core Minimal API + Swagger
+│   └── WargearTracker.Web/      # Blazor WASM frontend (phase 2)
+├── tests/
+│   └── WargearTracker.Tests/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   └── pull_request_template.md
+└── README.md
 ```
+
+---
 
 ## Roadmap
 
-- [x] Project setup
-- [ ] Army and miniature CRUD API
-- [ ] EF Core + SQLite
-- [ ] Auth (JWT)
-- [ ] Blazor frontend
-- [ ] Docker + deploy
-- [ ] Public collection links
-- [ ] Wahapedia integration
+### Phase 1 — Local MVP ✅
+- [x] Solution structure and project setup
+- [x] Core domain entities (Army, Miniature, PaintStatus)
+- [x] EF Core + SQLite + migrations
+- [x] Army CRUD endpoints
+- [x] Miniature CRUD endpoints
+- [x] Swagger UI
+
+### Phase 2 — Deploy and community
+- [ ] JWT authentication (register + login)
+- [ ] Migrate to PostgreSQL + Docker
+- [ ] Public shareable link per army
+- [ ] Blazor WebAssembly frontend
+- [ ] CI/CD with GitHub Actions
+- [ ] Deploy to Railway / Fly.io
+
+### Phase 3 — Community features
+- [ ] Wahapedia integration (army list points)
+- [ ] Spending tracker per army
+- [ ] Community statistics
+
+---
 
 ## Built with
 
-- [ASP.NET Core](https://learn.microsoft.com/aspnet/core) — Minimal API
-- [Entity Framework Core](https://learn.microsoft.com/ef/core) — ORM
-- [SQLite](https://sqlite.org) → [PostgreSQL](https://postgresql.org) — Database
-- [Blazor WebAssembly](https://learn.microsoft.com/aspnet/core/blazor) — Frontend
+| Layer | Technology |
+|-------|-----------|
+| API | ASP.NET Core 9 — Minimal API |
+| ORM | Entity Framework Core 9 |
+| Database | SQLite (phase 1) → PostgreSQL (phase 2) |
+| Frontend | Blazor WebAssembly (phase 2) |
+| Docs | Swashbuckle / Swagger UI |
+
+---
 
 ## Contributing
 
-This is a personal project but issues and suggestions are welcome. If you find it useful, consider [supporting it on Ko-fi](https://ko-fi.com).
+This is a personal project but issues and suggestions are welcome.  
+If you find it useful, consider [supporting it on Ko-fi](https://ko-fi.com).
+
+---
 
 ## License
 
