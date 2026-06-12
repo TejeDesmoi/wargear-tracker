@@ -11,14 +11,14 @@ public static class MiniatureEndpoints
         app.MapGet("/miniatures", async (WargearDbContext db) =>
         {
             return await db.Miniatures.ToListAsync();
-        });
+        }).RequireAuthorization();
 
         app.MapPost("/miniatures", async (WargearDbContext db, Miniature miniature) =>
         {
             db.Miniatures.Add(miniature);
             await db.SaveChangesAsync();
             return Results.Created($"/miniatures/{miniature.Id}", miniature);
-        });
+        }).RequireAuthorization();
 
         app.MapPatch("/miniatures/{id}/status", async (WargearDbContext db, Guid id, PaintStatus status) =>
         {
@@ -30,7 +30,7 @@ public static class MiniatureEndpoints
             miniature.Status = status;
             await db.SaveChangesAsync();
             return Results.NoContent();
-        });
+        }).RequireAuthorization();
 
         app.MapDelete("/miniatures/{id}", async (WargearDbContext db, Guid id) =>
         {
@@ -42,6 +42,6 @@ public static class MiniatureEndpoints
             db.Miniatures.Remove(miniature);
             await db.SaveChangesAsync();
             return Results.NoContent();
-        });
+        }).RequireAuthorization();
     }
 }
