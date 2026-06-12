@@ -19,5 +19,17 @@ public static class MiniatureEndpoints
             await db.SaveChangesAsync();
             return Results.Created($"/miniatures/{miniature.Id}", miniature);
         });
+
+        app.MapPatch("/miniatures/{id}/status", async (WargearDbContext db, Guid id, PaintStatus status) =>
+        {
+            var miniature = await db.Miniatures.FindAsync(id);
+            if (miniature == null)
+            {
+                return Results.NotFound();
+            }
+            miniature.Status = status;
+            await db.SaveChangesAsync();
+            return Results.NoContent();
+        });
     }
 }
