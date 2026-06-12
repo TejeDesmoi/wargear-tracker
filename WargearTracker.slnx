@@ -1,4 +1,5 @@
 <Solution>
+  <Folder Name="/Elementos de la solución/" />
   <Folder Name="/src/">
     <Project Path="src/WargearTracker.Api/WargearTracker.Api.csproj" />
     <Project Path="src/WargearTracker.Core/WargearTracker.Core.csproj" />
