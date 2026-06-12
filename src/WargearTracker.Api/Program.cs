@@ -19,4 +19,5 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapArmyEndpoints();
+app.MapMiniatureEndpoints();
 app.Run();
