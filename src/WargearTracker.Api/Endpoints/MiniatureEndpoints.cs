@@ -31,5 +31,17 @@ public static class MiniatureEndpoints
             await db.SaveChangesAsync();
             return Results.NoContent();
         });
+
+        app.MapDelete("/miniatures/{id}", async (WargearDbContext db, Guid id) =>
+        {
+            var miniature = await db.Miniatures.FindAsync(id);
+            if (miniature == null)
+            {
+                return Results.NotFound();
+            }
+            db.Miniatures.Remove(miniature);
+            await db.SaveChangesAsync();
+            return Results.NoContent();
+        });
     }
 }
