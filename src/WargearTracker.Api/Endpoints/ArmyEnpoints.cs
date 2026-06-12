@@ -12,20 +12,20 @@ public static class ArmyEnpoints
         app.MapGet("/armies", async (WargearDbContext db) =>
         {
             return await db.Armies.ToListAsync();
-        });
+        }).RequireAuthorization();
 
         app.MapPost("/armies", async (WargearDbContext db, Army army) =>
         {
             db.Armies.Add(army);
             await db.SaveChangesAsync();
             return Results.Created($"/armies/{army.Id}", army);
-        });
+        }).RequireAuthorization();
 
         app.MapGet("/armies/{id}", async (WargearDbContext db, Guid id) =>
         {
             var army = await db.Armies.FindAsync(id);
             return army != null ? Results.Ok(army) : Results.NotFound();
-        });
+        }).RequireAuthorization();
 
         app.MapDelete("/armies/{id}", async (WargearDbContext db, Guid id) =>
         {
@@ -37,6 +37,6 @@ public static class ArmyEnpoints
             db.Armies.Remove(army);
             await db.SaveChangesAsync();
             return Results.NoContent();
-        });
+        }).RequireAuthorization();
     }
 }

@@ -13,5 +13,6 @@ namespace WargearTracker.Data
         }
         public DbSet<Army> Armies { get; set; }
         public DbSet<Miniature> Miniatures { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
