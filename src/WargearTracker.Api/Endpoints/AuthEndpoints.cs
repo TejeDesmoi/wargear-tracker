@@ -11,7 +11,7 @@ namespace WargearTracker.Api.Endpoints;
 
 public static class AuthEndpoints
 {
-    public static void MapAuthEndpoints(WebApplication app)
+    public static void MapAuthEndpoints(this WebApplication app)
     {
         app.MapPost("/api/auth/register", async (AuthDto.AuthRequest request, WargearDbContext db,IConfiguration config) =>
         {
