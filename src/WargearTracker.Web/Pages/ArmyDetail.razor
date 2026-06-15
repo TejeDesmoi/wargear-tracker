@@ -85,7 +85,7 @@ else
     {
         if (string.IsNullOrEmpty(newName))
             return;
-        await MiniatureService.CreateMiniatureAsync(newName, newUnitType, newQuantity, newPaintStatus);
+        await MiniatureService.CreateMiniatureAsync(newName, newUnitType, newQuantity, newPaintStatus, Id);
         await LoadArmy();
     }
 

@@ -24,7 +24,15 @@ else
             <p>@army.Faction — @army.Game</p>
             <button @onclick="() => GoToArmy(army.Id)">View</button>
             <button @onclick="() => DeleteArmy(army.Id)">Delete</button>
+            @{
+                var total = army.Miniatures.Count;
+                var finished = army.Miniatures.Count(m => m.PaintStatus == "Finished");
+                var percent = total > 0 ? (finished * 100 / total) : 0;
+            }
+            <progress value="@percent" max="100"></progress>
+            <span>@finished/@total finished (@percent%)</span>
         </div>
+
     }
 }
 
