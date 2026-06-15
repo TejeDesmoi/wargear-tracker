@@ -12,5 +12,8 @@ namespace WargearTracker.Core
         public string Game { get; set; } = string.Empty;
         public Guid UserId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? PublicSlug { get; set;
+        }
+        public bool IsPublic { get; set; } = false;
     }
 }
