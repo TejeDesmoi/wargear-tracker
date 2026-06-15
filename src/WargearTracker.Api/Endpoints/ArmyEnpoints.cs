@@ -53,6 +53,15 @@ public static class ArmyEnpoints
             await db.SaveChangesAsync();
             return Results.Ok(army);
         }).RequireAuthorization();
+
+        app.MapGet("armies/public/{slug}", async (WargearDbContext db, string slug) =>
+        {
+            var army = await db.Armies
+                .Include(a => a.Miniatures)
+                .FirstOrDefaultAsync(a => a.PublicSlug == slug && a.IsPublic);
+
+            return army != null ? Results.Ok(army) : Results.NotFound();
+        });
     }
 
     private static string GenerateSlug(string name)

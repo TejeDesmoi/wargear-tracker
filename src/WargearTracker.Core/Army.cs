@@ -15,5 +15,7 @@ namespace WargearTracker.Core
         public string? PublicSlug { get; set;
         }
         public bool IsPublic { get; set; } = false;
+
+        public ICollection<Miniature> Miniatures { get; set; } = new List<Miniature>();
     }
 }
