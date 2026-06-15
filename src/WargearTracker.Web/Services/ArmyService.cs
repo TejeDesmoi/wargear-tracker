@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.JSInterop;
-using WargearTracker.Core;
 using WargearTracker.Web.Models;
 
 namespace WargearTracker.Web.Services;
