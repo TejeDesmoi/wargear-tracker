@@ -8,9 +8,11 @@ public static class MiniatureEndpoints
 {
     public static void MapMiniatureEndpoints(this WebApplication app)
     {
-        app.MapGet("/miniatures", async (WargearDbContext db) =>
+        app.MapGet("/armies/{armyId}/miniatures", async (WargearDbContext db, Guid armyId) =>
         {
-            return await db.Miniatures.ToListAsync();
+            return await db.Miniatures
+                .Where(m => m.ArmyId == armyId)
+                .ToListAsync();
         }).RequireAuthorization();
 
         app.MapPost("/miniatures", async (WargearDbContext db, Miniature miniature) =>
