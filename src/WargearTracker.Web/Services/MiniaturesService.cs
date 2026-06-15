@@ -24,7 +24,7 @@ public class MiniaturesService
         return await _http.GetFromJsonAsync<List<MiniatureModel>>($"armies/{armyId}/miniatures") ?? new List<MiniatureModel>();
     }
 
-    public async Task CreateMiniatureAsync(string name,string unitType, int quantity, string paintStatus)
+    public async Task CreateMiniatureAsync(string name, string unitType, int quantity, string paintStatus, Guid armyId)
     {
         var token = await _auth.GetTokenAsync();
         if (string.IsNullOrEmpty(token))
@@ -36,7 +36,8 @@ public class MiniaturesService
             name,
             unitType,
             quantity,
-            paintStatus
+            paintStatus,
+            armyId
         });
     }
 
