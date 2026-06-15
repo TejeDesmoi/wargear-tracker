@@ -29,6 +29,20 @@ public class AuthService
         return true;
     }
 
+    public async Task<bool> RegisterAsync(string email, string password)
+    {
+        var response = await _http.PostAsJsonAsync("api/auth/register", new
+        {
+            email,
+            password
+        });
+        if (!response.IsSuccessStatusCode)
+            return false;
+        var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        await _js.InvokeVoidAsync("localStorage.setItem", "token", result!.Token);
+        return true;
+    }
+
     public async Task<string?> GetTokenAsync()
     {
         return await _js.InvokeAsync<string>("localStorage.getItem", "token");
