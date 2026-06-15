@@ -7,6 +7,7 @@ COPY *.slnx .
 COPY src/WargearTracker.Core/*.csproj src/WargearTracker.Core/
 COPY src/WargearTracker.Data/*.csproj src/WargearTracker.Data/
 COPY src/WargearTracker.Api/*.csproj src/WargearTracker.Api/
+COPY src/WargearTracker.Web/*.csproj src/WargearTracker.Web/
 COPY tests/WargearTracker.Tests/*.csproj tests/WargearTracker.Tests/
 RUN dotnet restore
 

@@ -13,7 +13,9 @@ public static class ArmyEnpoints
     {
         app.MapGet("/armies", async (WargearDbContext db) =>
         {
-            return await db.Armies.ToListAsync();
+            return await db.Armies
+                .Include(a => a.Miniatures)
+                .ToListAsync();
         }).RequireAuthorization();
 
         app.MapPost("/armies", async (WargearDbContext db, Army army) =>

@@ -1,0 +1,29 @@
+@page "/login"
+@using WargearTracker.Web.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<h1>Login</h1>
+<input @bind="email" />
+<input type="password" @bind="password" />
+<button @onclick="HandleLogin">Login</button>
+
+@if (errorMessage != null)
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+@code {
+    private string email = string.Empty;
+    private string password = string.Empty;
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        var result = await Auth.LoginAsync(email, password);
+        if (result)
+            Nav.NavigateTo("/armies");
+        else
+            errorMessage = "Invalid email or password.";
+    }
+}

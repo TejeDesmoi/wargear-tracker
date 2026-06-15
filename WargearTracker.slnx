@@ -6,6 +6,7 @@
     <Project Path="src/WargearTracker.Api/WargearTracker.Api.csproj" />
     <Project Path="src/WargearTracker.Core/WargearTracker.Core.csproj" />
     <Project Path="src/WargearTracker.Data/WargearTracker.Data.csproj" />
+    <Project Path="src/WargearTracker.Web/WargearTracker.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/WargearTracker.Tests/WargearTracker.Tests.csproj" />
