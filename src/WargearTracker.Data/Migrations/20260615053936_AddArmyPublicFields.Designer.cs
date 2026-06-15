@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WargearTracker.Data;
@@ -11,9 +12,11 @@ using WargearTracker.Data;
 namespace WargearTracker.Data.Migrations
 {
     [DbContext(typeof(WargearDbContext))]
-    partial class WargearDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260615053936_AddArmyPublicFields")]
+    partial class AddArmyPublicFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,8 +91,6 @@ namespace WargearTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ArmyId");
-
                     b.ToTable("Miniatures");
                 });
 
@@ -117,20 +118,6 @@ namespace WargearTracker.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("WargearTracker.Core.Miniature", b =>
-                {
-                    b.HasOne("WargearTracker.Core.Army", null)
-                        .WithMany("Miniatures")
-                        .HasForeignKey("ArmyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WargearTracker.Core.Army", b =>
-                {
-                    b.Navigation("Miniatures");
                 });
 #pragma warning restore 612, 618
         }
