@@ -1,68 +1,65 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using Microsoft.JSInterop;
-using WargearTracker.Web.Models;
 
 namespace WargearTracker.Web.Services;
 
-public class ArmyService
+public class MiniaturesService
 {
     private readonly HttpClient _http;
     private readonly AuthService _auth;
 
-    public ArmyService(HttpClient http, AuthService auth)
+    public MiniaturesService(HttpClient http, AuthService auth)
     {
         _http = http;
         _auth = auth;
     }
 
-    public async Task<List<ArmyModel>> GetArmiesAsync()
+    public async Task<List<MiniatureModel>> GetMiniaturesAsync(Guid armyId)
     {
         var token = await _auth.GetTokenAsync();
         if (string.IsNullOrEmpty(token))
             throw new UnauthorizedAccessException("User is not authenticated.");
-
         _http.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", token);
-
-        return await _http.GetFromJsonAsync<List<ArmyModel>>("armies") ?? new List<ArmyModel>();
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        return await _http.GetFromJsonAsync<List<MiniatureModel>>($"armies/{armyId}/miniatures") ?? new List<MiniatureModel>();
     }
 
-    public async Task CreateArmyAsync(string name, string faction, string game)
+    public async Task CreateMiniatureAsync(string name,string unitType, int quantity, string paintStatus)
     {
         var token = await _auth.GetTokenAsync();
         if (string.IsNullOrEmpty(token))
             throw new UnauthorizedAccessException("User is not authenticated.");
         _http.DefaultRequestHeaders.Authorization =
-    new AuthenticationHeaderValue("Bearer", token);
-
-        await _http.PostAsJsonAsync("armies", new
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        await _http.PostAsJsonAsync("miniatures", new
         {
             name,
-            faction,
-            game
+            unitType,
+            quantity,
+            paintStatus
         });
     }
 
-    public async Task DeleteArmyAsync(Guid id)
+    public async Task UpdateMiniatureAsync(Guid id,string paintStatus)
     {
         var token = await _auth.GetTokenAsync();
         if (string.IsNullOrEmpty(token))
             throw new UnauthorizedAccessException("User is not authenticated.");
         _http.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", token);
-
-        await _http.DeleteAsync($"armies/{id}");
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        await _http.PatchAsJsonAsync($"miniatures/{id}/status", new
+        {
+            paintStatus
+        });
     }
 
-    public async Task<ArmyModel?> GetArmyAsync(Guid id)
+    public async Task DeleteMiniatureAsync(Guid id)
     {
         var token = await _auth.GetTokenAsync();
         if (string.IsNullOrEmpty(token))
             throw new UnauthorizedAccessException("User is not authenticated.");
         _http.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", token);
-
-        return await _http.GetFromJsonAsync<ArmyModel>($"armies/{id}");
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        await _http.DeleteAsync($"miniatures/{id}");
     }
 }
