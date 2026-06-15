@@ -20,6 +20,10 @@ Wargear Tracker lets you manage your wargaming miniature collection and follow y
 
 ---
 
+## Screenshots
+
+> _Coming in phase 2_
+
 ## Getting started
 
 ### Requirements
