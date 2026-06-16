@@ -10,5 +10,13 @@ public class ArmyModel
     public string Faction { get; set; } = string.Empty;
     public string Game { get; set; } = string.Empty;
     public List<MiniatureModel> Miniatures { get; set; } = new();
+    public string? PublicSlug
+    {
+        get; set;
+    }
+    public bool IsPublic
+    {
+        get; set;
+    }
 }
 
