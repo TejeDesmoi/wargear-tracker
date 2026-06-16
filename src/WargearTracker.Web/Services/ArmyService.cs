@@ -65,4 +65,31 @@ public class ArmyService
 
         return await _http.GetFromJsonAsync<ArmyModel>($"armies/{id}");
     }
+
+    public async Task<ArmyModel?> GetPublicArmyAsync(string slug)
+    {
+        try
+        {
+            return await _http.GetFromJsonAsync<ArmyModel>($"armies/public/{slug}");
+        }
+        catch (HttpRequestException)
+        {
+            return null;
+        }
+    }
+    public async Task<ArmyModel?> ToggleVisibilityAsync(Guid id, bool isPublic)
+    {
+        var token = await _auth.GetTokenAsync();
+        if (string.IsNullOrEmpty(token))
+            throw new UnauthorizedAccessException("User is not authenticated.");
+
+        _http.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _http.PatchAsJsonAsync($"armies/{id}/visibility", new
+        {
+            isPublic
+        });
+        return await response.Content.ReadFromJsonAsync<ArmyModel>();
+    }
 }

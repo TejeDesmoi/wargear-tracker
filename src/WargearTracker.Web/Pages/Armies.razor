@@ -33,6 +33,14 @@ else
             <span>@finished/@total finished (@percent%)</span>
         </div>
 
+        <button @onclick="() => ToggleVisibility(army)">
+            @(army.IsPublic ? "Make private" : "Make public")
+        </button>
+
+        @if (army.IsPublic && !string.IsNullOrEmpty(army.PublicSlug))
+        {
+            <p>Public link: <a href="/p/@army.PublicSlug" target="_blank">/p/@army.PublicSlug</a></p>
+        }
     }
 }
 
@@ -89,5 +97,10 @@ else
     private void GoToArmy(Guid id)
     {
         Nav.NavigateTo($"/armies/{id}");
+    }
+    private async Task ToggleVisibility(ArmyModel army)
+    {
+        await ArmyService.ToggleVisibilityAsync(army.Id, !army.IsPublic);
+        await LoadArmies();
     }
 }
