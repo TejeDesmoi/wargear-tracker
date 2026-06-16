@@ -1,0 +1,103 @@
+@page "/armies/{Id:guid}"
+@using WargearTracker.Web.Services
+@using WargearTracker.Web.Models
+@inject ArmyService ArmyService
+@inject MiniaturesService MiniatureService
+@inject NavigationManager Nav
+
+@if (army == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h1>@army.Name</h1>
+    <p>@army.Faction — @army.Game</p>
+
+    <h3>Miniatures</h3>
+    @if (!army.Miniatures.Any())
+    {
+        <p>No miniatures yet.</p>
+    }
+    else
+    {
+        @foreach (var mini in army.Miniatures)
+        {
+            <div>
+                <strong>@mini.Name</strong> (@mini.UnitType) x@mini.Quantity
+                <span>[@mini.PaintStatus]</span>
+                <select @onchange="e => UpdateStatus(mini.Id, e.Value!.ToString()!)">
+                    @foreach (var status in paintStatuses)
+                    {
+                        <option value="@status" selected="@(mini.PaintStatus == status)">@status</option>
+                    }
+                </select>
+                <button @onclick="() => DeleteMiniature(mini.Id)">Delete</button>
+            </div>
+        }
+    }
+
+    <hr />
+    <h3>Add miniature</h3>
+    <input @bind="newName" placeholder="Name" />
+    <input @bind="newUnitType" placeholder="Unit type" />
+    <input type="number" @bind="newQuantity" />
+    <select @bind="newPaintStatus">
+        @foreach (var status in paintStatuses)
+        {
+            <option value="@status">@status</option>
+        }
+    </select>
+    <button @onclick="CreateMiniature">Add</button>
+}
+
+@code {
+    [Parameter]
+    public Guid Id
+    {
+        get; set;
+    }
+
+    private ArmyModel? army;
+    private string newName = string.Empty;
+    private string newUnitType = string.Empty;
+    private int newQuantity = 1;
+    private string newPaintStatus = "Unboxed";
+
+    private readonly List<string> paintStatuses = new()
+    {
+        "Unboxed", "Built", "Primed", "BaseCoat", "Detailed", "Finished"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadArmy();
+    }
+
+    private async Task LoadArmy()
+    {
+        army = await ArmyService.GetArmyAsync(Id);
+        if (army != null)
+            army.Miniatures = await MiniatureService.GetMiniaturesAsync(Id);
+    }
+
+    private async Task CreateMiniature()
+    {
+        if (string.IsNullOrEmpty(newName))
+            return;
+        await MiniatureService.CreateMiniatureAsync(newName, newUnitType, newQuantity, newPaintStatus, Id);
+        await LoadArmy();
+    }
+
+    private async Task UpdateStatus(Guid miniId, string status)
+    {
+        await MiniatureService.UpdateMiniatureAsync(miniId, status);
+        await LoadArmy();
+    }
+
+    private async Task DeleteMiniature(Guid miniId)
+    {
+        await MiniatureService.DeleteMiniatureAsync(miniId);
+        await LoadArmy();
+    }
+}

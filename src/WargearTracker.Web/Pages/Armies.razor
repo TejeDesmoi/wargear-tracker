@@ -1,0 +1,106 @@
+@page "/armies"
+@using WargearTracker.Web.Services
+@using WargearTracker.Web.Models
+@inject ArmyService ArmyService
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<h1>My Armies</h1>
+
+@if (armies == null)
+{
+    <p>Loading...</p>
+}
+else if (!armies.Any())
+{
+    <p>No armies yet. Create your first one!</p>
+}
+else
+{
+    @foreach (var army in armies)
+    {
+        <div>
+            <h3>@army.Name</h3>
+            <p>@army.Faction — @army.Game</p>
+            <button @onclick="() => GoToArmy(army.Id)">View</button>
+            <button @onclick="() => DeleteArmy(army.Id)">Delete</button>
+            @{
+                var total = army.Miniatures.Count;
+                var finished = army.Miniatures.Count(m => m.PaintStatus == "Finished");
+                var percent = total > 0 ? (finished * 100 / total) : 0;
+            }
+            <progress value="@percent" max="100"></progress>
+            <span>@finished/@total finished (@percent%)</span>
+        </div>
+
+        <button @onclick="() => ToggleVisibility(army)">
+            @(army.IsPublic ? "Make private" : "Make public")
+        </button>
+
+        @if (army.IsPublic && !string.IsNullOrEmpty(army.PublicSlug))
+        {
+            <p>Public link: <a href="/p/@army.PublicSlug" target="_blank">/p/@army.PublicSlug</a></p>
+        }
+    }
+}
+
+<hr />
+<h3>Add new army</h3>
+<input @bind="newName" placeholder="Name" />
+<input @bind="newFaction" placeholder="Faction" />
+<input @bind="newGame" placeholder="Game" />
+<button @onclick="CreateArmy">Create</button>
+
+@if (errorMessage != null)
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+@code {
+    private List<ArmyModel>? armies;
+    private string newName = string.Empty;
+    private string newFaction = string.Empty;
+    private string newGame = string.Empty;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await Auth.GetTokenAsync();
+        if (string.IsNullOrEmpty(token))
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+        await LoadArmies();
+    }
+
+    private async Task LoadArmies()
+    {
+        armies = await ArmyService.GetArmiesAsync();
+    }
+
+    private async Task CreateArmy()
+    {
+        if (string.IsNullOrEmpty(newName))
+            return;
+        await ArmyService.CreateArmyAsync(newName, newFaction, newGame);
+        newName = newFaction = newGame = string.Empty;
+        await LoadArmies();
+    }
+
+    private async Task DeleteArmy(Guid id)
+    {
+        await ArmyService.DeleteArmyAsync(id);
+        await LoadArmies();
+    }
+
+    private void GoToArmy(Guid id)
+    {
+        Nav.NavigateTo($"/armies/{id}");
+    }
+    private async Task ToggleVisibility(ArmyModel army)
+    {
+        await ArmyService.ToggleVisibilityAsync(army.Id, !army.IsPublic);
+        await LoadArmies();
+    }
+}

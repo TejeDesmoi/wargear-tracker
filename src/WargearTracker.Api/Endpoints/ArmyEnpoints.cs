@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WargearTracker.Core;
 using WargearTracker.Data;
+using static WargearTracker.Api.DTOs.VisibilityDto;
+using System.Text.RegularExpressions;
 
 namespace WargearTracker.Api.Endpoints;
 public static class ArmyEnpoints
@@ -11,21 +13,23 @@ public static class ArmyEnpoints
     {
         app.MapGet("/armies", async (WargearDbContext db) =>
         {
-            return await db.Armies.ToListAsync();
-        });
+            return await db.Armies
+                .Include(a => a.Miniatures)
+                .ToListAsync();
+        }).RequireAuthorization();
 
         app.MapPost("/armies", async (WargearDbContext db, Army army) =>
         {
             db.Armies.Add(army);
             await db.SaveChangesAsync();
             return Results.Created($"/armies/{army.Id}", army);
-        });
+        }).RequireAuthorization();
 
         app.MapGet("/armies/{id}", async (WargearDbContext db, Guid id) =>
         {
             var army = await db.Armies.FindAsync(id);
             return army != null ? Results.Ok(army) : Results.NotFound();
-        });
+        }).RequireAuthorization();
 
         app.MapDelete("/armies/{id}", async (WargearDbContext db, Guid id) =>
         {
@@ -37,6 +41,34 @@ public static class ArmyEnpoints
             db.Armies.Remove(army);
             await db.SaveChangesAsync();
             return Results.NoContent();
+        }).RequireAuthorization();
+
+        app.MapPatch("/armies/{id}/visibility", async (WargearDbContext db, Guid id, VisibilityRequest request) =>
+        {
+            var army = await db.Armies.FindAsync(id);
+            if (army == null)
+                return Results.NotFound();
+
+            army.IsPublic = request.IsPublic;
+            army.PublicSlug = request.IsPublic ? GenerateSlug(army.Name) : null;
+
+            await db.SaveChangesAsync();
+            return Results.Ok(army);
+        }).RequireAuthorization();
+
+        app.MapGet("armies/public/{slug}", async (WargearDbContext db, string slug) =>
+        {
+            var army = await db.Armies
+                .Include(a => a.Miniatures)
+                .FirstOrDefaultAsync(a => a.PublicSlug == slug && a.IsPublic);
+
+            return army != null ? Results.Ok(army) : Results.NotFound();
         });
+    }
+
+    private static string GenerateSlug(string name)
+    {
+        string slug = name.ToLower().Replace(" ", "-");
+        return Regex.Replace(slug, "[^a-z0-9-]", "");
     }
 }
