@@ -65,4 +65,17 @@ public class ArmyService
 
         return await _http.GetFromJsonAsync<ArmyModel>($"armies/{id}");
     }
+
+    public async Task<ArmyModel?> GetPublicArmyAsync(string slug)
+    {
+        try
+        {
+            return await _http.GetFromJsonAsync<ArmyModel>($"armies/public/{slug}");
+        }
+        catch (HttpRequestException)
+        {
+            return null;
+        }
+    }
+
 }
