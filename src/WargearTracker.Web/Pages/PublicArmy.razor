@@ -1,0 +1,48 @@
+﻿@page "/p/{Slug}"
+@using WargearTracker.Web.Services
+@using WargearTracker.Web.Models
+@inject ArmyService ArmyService
+
+@if (army == null && !notFound)
+{
+    <p>Loading...</p>
+}
+else if (notFound)
+{
+    <p>Army not found or not public.</p>
+}
+else
+{
+    <h1>@army!.Name</h1>
+    <p>@army.Faction — @army.Game</p>
+
+    <h3>Miniatures</h3>
+    @if (!army.Miniatures.Any())
+    {
+        <p>No miniatures yet.</p>
+    }
+    else
+    {
+        @foreach (var mini in army.Miniatures)
+        {
+            <div>
+                <strong>@mini.Name</strong> (@mini.UnitType) x@mini.Quantity
+                <span>[@mini.PaintStatus]</span>
+            </div>
+        }
+    }
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = string.Empty;
+
+    private ArmyModel? army;
+    private bool notFound;
+
+    protected override async Task OnInitializedAsync()
+    {
+        army = await ArmyService.GetPublicArmyAsync(Slug);
+        notFound = army == null;
+    }
+}
