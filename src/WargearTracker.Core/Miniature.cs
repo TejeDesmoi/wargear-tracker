@@ -9,7 +9,7 @@ public class Miniature
     public string Name { get; set; } = string.Empty;
     public string UnitType { get; set; } = string.Empty;
     public int Quantity { get; set; } = 1;
-    public PaintStatus Status { get; set; } = PaintStatus.Unboxed;
+    public PaintStatus PaintStatus { get; set; } = PaintStatus.Unboxed;
     public Guid ArmyId { get; set; }
     public string? Notes { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

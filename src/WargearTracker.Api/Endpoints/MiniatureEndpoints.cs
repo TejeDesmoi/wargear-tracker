@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
+using WargearTracker.Api.DTOs;
 using WargearTracker.Core;
 using WargearTracker.Data;
 
@@ -22,14 +24,14 @@ public static class MiniatureEndpoints
             return Results.Created($"/miniatures/{miniature.Id}", miniature);
         }).RequireAuthorization();
 
-        app.MapPatch("/miniatures/{id}/status", async (WargearDbContext db, Guid id, PaintStatus status) =>
+        app.MapPatch("/miniatures/{id}/status", async (WargearDbContext db, Guid id, UpdateStatusRequest request) =>
         {
             var miniature = await db.Miniatures.FindAsync(id);
             if (miniature == null)
             {
                 return Results.NotFound();
             }
-            miniature.Status = status;
+            miniature.PaintStatus = request.PaintStatus;
             await db.SaveChangesAsync();
             return Results.NoContent();
         }).RequireAuthorization();
