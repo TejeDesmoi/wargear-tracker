@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using WargearTracker.Api.Endpoints;
+using WargearTracker.Api.Services;
 using WargearTracker.Data;
 
 
@@ -74,6 +75,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
