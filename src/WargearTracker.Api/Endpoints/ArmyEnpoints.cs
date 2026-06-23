@@ -5,6 +5,7 @@ using WargearTracker.Core;
 using WargearTracker.Data;
 using static WargearTracker.Api.DTOs.VisibilityDto;
 using System.Text.RegularExpressions;
+using WargearTracker.Core.Services;
 
 namespace WargearTracker.Api.Endpoints;
 public static class ArmyEnpoints
@@ -50,7 +51,7 @@ public static class ArmyEnpoints
                 return Results.NotFound();
 
             army.IsPublic = request.IsPublic;
-            army.PublicSlug = request.IsPublic ? GenerateSlug(army.Name) : null;
+            army.PublicSlug = request.IsPublic ? SlugService.GenerateSlug(army.Name) : null;
 
             await db.SaveChangesAsync();
             return Results.Ok(army);
@@ -64,11 +65,5 @@ public static class ArmyEnpoints
 
             return army != null ? Results.Ok(army) : Results.NotFound();
         });
-    }
-
-    private static string GenerateSlug(string name)
-    {
-        string slug = name.ToLower().Replace(" ", "-");
-        return Regex.Replace(slug, "[^a-z0-9-]", "");
     }
 }
