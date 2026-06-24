@@ -1,5 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using WargearTracker.Api.Services;
 using WargearTracker.Data;
 
@@ -90,5 +94,72 @@ public class AuthServiceTests
 
         // Assert
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task RegisterAsync_CorrectTokenUserClaims()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<WargearDbContext>()
+            .UseInMemoryDatabase(databaseName: "Register_CorrectTokenClaims")
+            .Options;
+        using var db = new WargearDbContext(options);
+        var service = CreateAuthService(db);
+        // Act
+        var token = await service.RegisterAsync("test@test.com", "otrapassword");
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(token);
+        var userIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+
+        // Assert
+        Assert.Equal("test@test.com", jwt.Claims.First(c => c.Type == ClaimTypes.Email).Value);
+        Assert.NotNull(userIdClaim);
+        Assert.False(string.IsNullOrEmpty(userIdClaim.Value));
+        Assert.Equal("test", jwt.Issuer);
+        Assert.Equal("test", jwt.Audiences.First());
+    }
+
+    [Fact]
+    public async Task RegisterAsync_TokenExpiresInSevenDays()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<WargearDbContext>()
+            .UseInMemoryDatabase(databaseName: "Register_TokenExpiry")
+            .Options;
+        using var db = new WargearDbContext(options);
+        var service = CreateAuthService(db);
+
+        // Act
+        var token = await service.RegisterAsync("test@test.com", "password123");
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(token);
+
+        // Assert
+        var expectedExpiry = DateTime.UtcNow.AddDays(7);
+        Assert.True(jwt.ValidTo > expectedExpiry.AddMinutes(-1));
+        Assert.True(jwt.ValidTo < expectedExpiry.AddMinutes(1));
+    }
+
+    [Fact]
+    public async Task RegisterAsync_TokenWithWrongKey_FailsValidation()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<WargearDbContext>()
+            .UseInMemoryDatabase(databaseName: "Register_WrongKey")
+            .Options;
+        using var db = new WargearDbContext(options);
+        var service = CreateAuthService(db);
+        var token = await service.RegisterAsync("test@test.com", "password123");
+        var handler = new JwtSecurityTokenHandler();
+
+        // Act & Assert
+        Assert.ThrowsAny<Exception>(() =>
+            handler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes("ClaveIncorrectaQueNoCoincide12345"))
+            }, out _));
     }
 }
