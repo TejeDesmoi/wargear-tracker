@@ -1,4 +1,5 @@
 @page "/armies"
+@using WargearTracker.Core.Services
 @using WargearTracker.Web.Services
 @using WargearTracker.Web.Models
 @inject ArmyService ArmyService
@@ -25,12 +26,10 @@ else
             <button @onclick="() => GoToArmy(army.Id)">View</button>
             <button @onclick="() => DeleteArmy(army.Id)">Delete</button>
             @{
-                var total = army.Miniatures.Count;
-                var finished = army.Miniatures.Count(m => m.PaintStatus == "Finished");
-                var percent = total > 0 ? (finished * 100 / total) : 0;
+                var percent = ProgressCalculator.CalculateProgress(army.Miniatures);
             }
             <progress value="@percent" max="100"></progress>
-            <span>@finished/@total finished (@percent%)</span>
+            <span>@percent% painted (@percent%)</span>
         </div>
 
         <button @onclick="() => ToggleVisibility(army)">
