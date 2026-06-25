@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\src\WargearTracker.Core\WargearTracker.Core.csproj" />
     <ProjectReference Include="..\..\src\WargearTracker.Api\WargearTracker.Api.csproj" />
     <ProjectReference Include="..\..\src\WargearTracker.Data\WargearTracker.Data.csproj" />
+    <ProjectReference Include="..\..\src\WargearTracker.Web\WargearTracker.Web.csproj" />
   </ItemGroup>
 
 </Project>
